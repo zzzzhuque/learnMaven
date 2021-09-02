@@ -68,3 +68,110 @@ sayHello(String name)方法。我们在给HelloFriend项目使用 mvn compile �
 怎么办呢？到第一个maven工程中执行 mvn install 后，你再去看一下本地仓库，你会
 发现有了Hello项目的jar包。一旦本地仓库有了依赖的maven工程的jar包后，你再到
 HelloFriend项目中使用 mvn compile 命令的时候，可以成功编译
+
+### 依赖范围
+
+`<scope></scope>`
+
+- compile，默认值，适用于所有阶段（开发、测试、部署、运行），本jar会一直存在所有阶段。
+  
+- provided，只在开发、测试阶段使用，目的是不让Servlet容器和本地仓库的jar包冲突，如servlet.jar。
+  
+- runtime，只在运行时使用，如JDBC驱动，适用运行和测试阶段。
+  
+- test，只在测试时使用，用于编译和运行测试代码，不会随项目发布。
+  
+- system，类似provided，需要显式提供包含依赖的jar，Maven不会在Repository中查找它。
+
+## 生命周期
+
+- Clean Lifecycle
+
+- Default LifeCycle
+
+- Site LifeCycle
+
+## 高级特性
+
+- 依赖的传递性
+  - 路径最短者优先
+  - 路径相同先声明优先原则
+  
+- 统一管理依赖的版本
+  - 为了统一管理版本号，可以使用properties标签，里面可以自定义版本的标签名。在使用的地方使用${自定义标签名}
+  
+## build
+
+```xml
+作者：芋道源码
+链接：https://zhuanlan.zhihu.com/p/150709572
+来源：知乎
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+<build>
+  <!-- 项目的名字 -->
+  <finalName>WebMavenDemo</finalName>
+  <!-- 描述项目中资源的位置 -->
+  <resources>
+    <!-- 自定义资源1 -->
+    <resource>
+      <!-- 资源目录 -->
+      <directory>src/main/java</directory>
+      <!-- 包括哪些文件参与打包 -->
+      <includes>
+        <include>**/*.xml</include>
+      </includes>
+      <!-- 排除哪些文件不参与打包 -->
+      <excludes>
+        <exclude>**/*.txt</exclude>
+          <exclude>**/*.doc</exclude>
+      </excludes>
+    </resource>
+  </resources>
+  <!-- 设置构建时候的插件 -->
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <version>2.1</version>
+      <configuration>
+        <!-- 源代码编译版本 -->
+        <source>1.8</source>
+        <!-- 目标平台编译版本 -->
+        <target>1.8</target>
+      </configuration>
+    </plugin>
+    <!-- 资源插件（资源的插件） -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-resources-plugin</artifactId>
+      <version>2.1</version>
+      <executions>
+        <execution>
+          <phase>compile</phase>
+        </execution>
+      </executions>
+      <configuration>
+        <encoding>UTF-8</encoding>
+      </configuration>
+    </plugin>
+    <!-- war插件(将项目打成war包) -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-war-plugin</artifactId>
+      <version>2.1</version>
+      <configuration>
+        <!-- war包名字 -->
+        <warName>WebMavenDemo1</warName>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+```
+
+配置好build后，执行mvn package之后，在maven工程指定的target目录里war包和文件都按照配置的生成了
+  
+
+# Ref
+
+1、https://www.zhihu.com/search?type=content&q=maven
